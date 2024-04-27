@@ -62,7 +62,7 @@ def dashboard():
         response.delete_cookie("username")
         response.delete_cookie("password")
         return response
-    if username == environ.get("ROOT_USER"):
+    if username == environ.get("SYSTEM_ADMIN_USER"):
         return render_template("sysadmin.html")
     else:
         return render_template("dashboard.html", username=username, password=password)

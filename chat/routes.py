@@ -58,7 +58,10 @@ def dashboard():
     username = request.cookies.get("username")
     password = request.cookies.get("password")
     if user_loggedin() == False or valid_user() == False:
-        return redirect(url_for("home"))
+        response = make_response(redirect(url_for("home")))
+        response.delete_cookie("username")
+        response.delete_cookie("password")
+        return response
     if username == environ.get("ROOT_USER"):
         return render_template("sysadmin.html")
     else:

@@ -5,8 +5,10 @@ from flask import redirect
 from flask import url_for
 from .models import User
 from .utils import user_loggedin
+from .utils import valid_user
 from random import randint
 from . import db
+from os import environ
 
 _dummy_token = " "
 
@@ -34,7 +36,6 @@ def home():
         response = make_response(redirect(url_for("dashboard")))
         response.set_cookie("username", username)
         response.set_cookie("password", password)
-        response.set_cookie("jwt_token", _dummy_token)
         return response
 
 def login():
@@ -50,15 +51,15 @@ def login():
         response = make_response(redirect(url_for("dashboard")))
         response.set_cookie("username", username)
         response.set_cookie("password", password)
-        response.set_cookie("jwt_token", _dummy_token)
         return response
     return render_template("login.html", error = "Invalid username or password")
 
 def dashboard():
     username = request.cookies.get("username")
     password = request.cookies.get("password")
-    jwt_token = request.cookies.get("jwt_token")
-    if user_loggedin() == False:
-        print("failure")
+    if user_loggedin() == False or valid_user() == False:
         return redirect(url_for("home"))
-    return render_template("dashboard.html", username=username, password=password, jwt_token=jwt_token)
+    if username == environ.get("ROOT_USER"):
+        return render_template("sysadmin.html")
+    else:
+        return render_template("dashboard.html", username=username, password=password)

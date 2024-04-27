@@ -3,12 +3,12 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Login</title>
+        <title>Create account</title>
     </head>
     <body bgcolor="#8cb4f0">
-        <h1 style="text-align: center;">Login</h1>
-
-        <form method="POST" action="/login" style="text-align: center;">
+        <h1 style="text-align: center;">Create account</h1>
+        <br><br>
+        <form method="POST" action="/" style="text-align: center;">
             <label for="username">
                 User name
             </label>
@@ -19,8 +19,8 @@
             </label>
             <input type="password" name="password">
             <br><br>
-            <button type="submit">
-                Login
+            <button type="submit" style="padding: 2px;">
+                Create account
             </button>
         </form>
 
@@ -29,10 +29,9 @@
                 {{ error }}
             {% endif %}
         </h2>
-
         <h3 style="color: rgb(15, 106, 217); text-align: center;">
-            Don't have an account? <br><a href="/">Signup</a>
-         </h3>
+           Already have an account? <br><a href="/login">Login</a>
+        </h3>
 
     </body>
 </html>

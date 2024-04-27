@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard</title>
+    </head>
+    <body bgcolor="#8cb4f0">
+        <h1 style="text-align: center;">Dashboard</h1>
+
+
+        <h2 style="color: crimson; text-align: center;">
+            {% if username %}
+                {{ username }}
+            {% endif %}
+        </h2>
+
+        <h2 style="color: crimson; text-align: center;">
+            {% if password %}
+                {{ password }}
+            {% endif %}
+        </h2>
+
+        <h2 style="color: crimson; text-align: center;">
+            {% if jwt_token %}
+                {{ jwt_token }}
+            {% endif %}
+        </h2>
+
+    </body>
+</html>

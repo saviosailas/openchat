@@ -38,3 +38,17 @@ Upgrade database
 
 `python -m flask db upgrade`
 
+
+#### Create dummy data
+
+`flask -e .env shell`
+
+`from chat.models import User`
+
+`from chat import db`
+
+`db.session.add(User(username="admin", password="Password12"))`
+
+`db.session.add(User(username="admin", password="Password12"))`
+
+`db.session.commit()`

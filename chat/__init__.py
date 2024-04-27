@@ -10,6 +10,7 @@ app = Flask("chat_app")
 
 app.config["SECRET_KEY"] = environ.get("FLASK_SECRET")
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + path.join(getcwd(), "database", "chat.db")
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app=app)
 

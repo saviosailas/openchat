@@ -41,7 +41,7 @@
     </style>
 </head>
 
-<body bgcolor="#8cb4f0">
+<body bgcolor="#8cb4f0" onload="getMessages()">
     <h1 style="text-align: center;">Open chat</h1>
 
 
@@ -54,7 +54,7 @@
         <div class="chat-box" id="chatBox" style="text-align: left;">
             <!-- chat messages -->
             <div class='sender nomessage'> Hi {{ username }},</div>
-            <div class='sender nomessage'> 
+            <div class='sender nomessage'>
                 <div class="nomessage" style="height: 10px;"> </div>
             </div>
             <div class='content nomessage'> Message box is empty. </div>
@@ -69,6 +69,46 @@
 </body>
 <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
 <script>
+    function getMessages() {
+        console.log("fetch messages")
+        $.ajax({
+            url: '/getmessage',
+            type: 'GET',
+            contentType: 'application/json',
+            // data: JSON.stringify({ message: message }),
+            success: function (response) {
+                // Iterate through the response
+                // console.log(response)
+                // console.log(response.length)
+                $.each(response, function (index, message_record) {
+
+                    // console.log(`msg: ${message_record.msg}, from: ${message_record.fromAdmin}`);
+
+                    var messageElement = document.createElement("div");
+                    messageElement.classList.add("message");
+                    if (message_record.fromAdmin) {
+                        messageElement.innerHTML = "<span class='sender'> {{ superuser }}: </span><span class='content'>" + message_record.msg + "</span>";
+                    } else {
+                        messageElement.innerHTML = "<span class='sender'> {{ username }}: </span><span class='content'>" + message_record.msg + "</span>";
+                    }
+                    chatBox.appendChild(messageElement);
+
+                });
+                // hide empty message box message
+                if (response.length != 0) {
+                    var elementsToHide = document.querySelectorAll('.nomessage');
+                    elementsToHide.forEach(function (element) {
+                        element.style.visibility = 'hidden';
+                    });
+                }
+
+            },
+            error: function (xhr, status, error) {
+                console.error('failed:', status);
+            }
+        });
+    }
+
     function sendMessage() {
         var messageInput = document.getElementById("messageInput");
         var message = messageInput.value.trim();
@@ -94,7 +134,7 @@
                     chatBox.appendChild(messageElement);
                     chatBox.scrollTop = chatBox.scrollHeight;
                     messageInput.value = "";
-                    
+
                 },
                 error: function (xhr, status, error) {
                     console.error('failed:', status);

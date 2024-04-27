@@ -17,5 +17,7 @@ class Message(db.Model):
     message_id = db.Column(db.Integer, primary_key=True)
     message_text = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
-    sender_name = db.Column(db.String(30), db.ForeignKey("user.username"), nullable=False)
+    username = db.Column(db.String(30), db.ForeignKey("user.username"), nullable=False)
+    from_admin = db.Column(db.Boolean, nullable=False, default=False)
+
     

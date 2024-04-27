@@ -10,6 +10,8 @@ from .utils import valid_user
 from random import randint
 from . import db
 from os import environ
+from flask import jsonify
+
 
 _dummy_token = " "
 
@@ -67,7 +69,7 @@ def dashboard():
         users = User.query.all()
         return render_template("sysadmin.html", users=users)
     else:
-        return render_template("dashboard.html", username=username, flash_message="")
+        return render_template("dashboard.html", username=username, flash_message="", super_user=environ.get("SYSTEM_ADMIN_USER"))
     
 def message():
     message = request.get_json().get("message")
@@ -77,7 +79,7 @@ def message():
             return "failed", 409
         new_message = Message()
         new_message.message_text = message
-        new_message.sender_name = sender.username
+        new_message.username = sender.username
         db.session.add(new_message)
         db.session.commit()
 
@@ -86,3 +88,23 @@ def message():
         return "failed", 409
     print(f"message >> [{request.cookies.get('username')}]  {message}")
     return "OK"
+
+def get_message():
+    try:
+        user = User.query.filter_by(username=request.cookies.get("username")).first()
+        if user is None:
+            return "invalid user", 403
+        messages = Message.query.filter_by(username=user.username).order_by(Message.timestamp.desc()).limit(5).all()
+
+        message_data = [
+            {
+                "msg": message.message_text,
+                "fromAdmin": message.from_admin
+            }
+            for message in messages
+        ]
+        return jsonify(message_data)
+    
+    except Exception as exp:
+        print(exp)
+    return []

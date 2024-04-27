@@ -4,6 +4,7 @@ from flask import make_response
 from flask import redirect
 from flask import url_for
 from .models import User
+from .models import Message
 from .utils import user_loggedin
 from .utils import valid_user
 from random import randint
@@ -69,6 +70,19 @@ def dashboard():
         return render_template("dashboard.html", username=username, flash_message="")
     
 def message():
-    message = request.get_json()
+    message = request.get_json().get("message")
+    try:
+        sender = User.query.filter_by(username=request.cookies.get("username")).first()
+        if sender is None:
+            return "failed", 409
+        new_message = Message()
+        new_message.message_text = message
+        new_message.sender_name = sender.username
+        db.session.add(new_message)
+        db.session.commit()
+
+    except Exception as exp:
+        print(exp)
+        return "failed", 409
     print(f"message >> [{request.cookies.get('username')}]  {message}")
     return "OK"

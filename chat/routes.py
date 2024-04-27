@@ -66,4 +66,9 @@ def dashboard():
         users = User.query.all()
         return render_template("sysadmin.html", users=users)
     else:
-        return render_template("dashboard.html", username=username, password=password)
+        return render_template("dashboard.html", username=username, flash_message="")
+    
+def message():
+    message = request.get_json()
+    print(f"message >> [{request.cookies.get('username')}]  {message}")
+    return "OK"

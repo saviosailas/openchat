@@ -1,1 +1,32 @@
-You have root access
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Open chat | Create account</title>
+    </head>
+    <body bgcolor=" #8ed8f6  ">
+        <h1 style="text-align: center;">System admin dashboard</h1>
+        <br><br>
+        <center>
+        <table border=1 "text-align: left;">
+        <th style="padding: 10px;"> user name </th>
+        <th style="padding: 10px;"> password </th>
+        {% for user in users %}
+        <tr style="padding: 10px;">
+            <td style="padding: 10px;"> {{ user.username }} </td>
+            <td style="padding: 10px;"> {{ user.password }} </td>
+        </tr>
+        {% endfor %}
+        </table>
+    </center>
+
+        <h2 style="color: crimson; text-align: center;">
+            {% if error %}
+                {{ error }}
+            {% endif %}
+        </h2>
+       
+
+    </body>
+</html>

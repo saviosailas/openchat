@@ -75,17 +75,27 @@ def dashboard():
                                users=users)
     else:
         return render_template("dashboard.html", username=username, flash_message="", 
-                               super_user=environ.get("SUPER_USER"))
+                               superuser=environ.get("SUPER_USER"))
     
 def message():
     message = request.get_json().get("message")
+    from_super_user = request.get_json().get("fromAdmin")
+    client_username = request.get_json().get("client_user")
+    cookie_username = request.cookies.get("username")
+
     try:
-        sender = User.query.filter_by(username=request.cookies.get("username")).first()
+        sender = User.query.filter_by(username=cookie_username).first()
         if sender is None:
             return "failed", 409
         new_message = Message()
         new_message.message_text = message
         new_message.username = sender.username
+        if from_super_user:
+            sender = User.query.filter_by(username=client_username).first()
+            new_message.username = sender.username
+            if sender is None:
+                return "failed", 409
+            new_message.from_admin = True
         db.session.add(new_message)
         db.session.commit()
 

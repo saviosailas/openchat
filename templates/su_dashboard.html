@@ -42,9 +42,8 @@
     </style>
 </head>
 
-<!-- <body bgcolor="#8cb4f0" onload="getMessages()"> -->
+<body bgcolor="#8cb4f0" onload="getClientMessages()">
 
-<body bgcolor="#8cb4f0">
     <h1 style="text-align: center;">Open chat</h1>
 
 
@@ -86,45 +85,6 @@
 </body>
 <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
 <script>
-    function getMessages() {
-        console.log("fetch messages")
-        $.ajax({
-            url: '/getmessage',
-            type: 'GET',
-            contentType: 'application/json',
-            // data: JSON.stringify({ message: message }),
-            success: function (response) {
-                // Iterate through the response
-                // console.log(response)
-                // console.log(response.length)
-                $.each(response, function (index, message_record) {
-
-                    // console.log(`msg: ${message_record.msg}, from: ${message_record.fromAdmin}`);
-
-                    var messageElement = document.createElement("div");
-                    messageElement.classList.add("message");
-                    if (message_record.fromAdmin) {
-                        messageElement.innerHTML = "<span class='sender'> {{ superuser }}: </span><span class='content'>" + message_record.msg + "</span>";
-                    } else {
-                        messageElement.innerHTML = "<span class='sender'> {{ username }}: </span><span class='content'>" + message_record.msg + "</span>";
-                    }
-                    chatBox.appendChild(messageElement);
-
-                });
-                // hide empty message box message
-                if (response.length != 0) {
-                    var elementsToHide = document.querySelectorAll('.nomessage');
-                    elementsToHide.forEach(function (element) {
-                        element.style.visibility = 'hidden';
-                    });
-                }
-
-            },
-            error: function (xhr, status, error) {
-                console.error('failed:', status);
-            }
-        });
-    }
 
     function sendMessage() {
         var messageInput = document.getElementById("messageInput");
@@ -136,7 +96,7 @@
                 url: '/message',
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({ message: message }),
+                data: JSON.stringify({ message: message, fromAdmin: true, client_user: document.getElementById('username_list').value }),
                 success: function (response) {
                     console.log('success:', response);
                     // hide empty message box message
@@ -171,9 +131,13 @@
         console.log(message)
     }
 
+    
     document.getElementById('user-list-form').addEventListener('submit', function (event) {
         event.preventDefault(); // Prevent the form from submitting normally
+        getClientMessages();
+    });
 
+    function getClientMessages() {
         // Gather the form data
         var username = document.getElementById('username_list').value
 
@@ -215,9 +179,9 @@
                     var messageElement = document.createElement("div");
                     messageElement.classList.add("message");
                     if (message_record.fromAdmin) {
-                        messageElement.innerHTML = "<span class='sender'> {{ superuser }}: </span><span class='content'>" + message_record.msg + "</span>";
+                        messageElement.innerHTML = "<span class='sender'> {{ super_user }}: </span><span class='content'>" + message_record.msg + "</span>";
                     } else {
-                        messageElement.innerHTML = "<span class='sender'> {{ username }}: </span><span class='content'>" + message_record.msg + "</span>";
+                        messageElement.innerHTML = `<span class='sender'> ${username} : </span><span class='content'>` + message_record.msg + "</span>";
                     }
                     chatBox.appendChild(messageElement);
 
@@ -235,9 +199,7 @@
                 console.error('failed:', status);
             }
         });
-
-
-    });
+    }
 </script>
 
 </html>

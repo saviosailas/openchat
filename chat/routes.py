@@ -12,9 +12,6 @@ from . import db
 from os import environ
 from flask import jsonify
 
-
-_dummy_token = " "
-
 def home():
     if user_loggedin():
         return redirect(url_for("dashboard"))

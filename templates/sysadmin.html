@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Open chat | Create account</title>
+        <link rel="icon" type="image/png" href="/static/img/fav.png">
     </head>
     <body bgcolor=" #8ed8f6  ">
         <h1 style="text-align: center;">System admin dashboard</h1>
@@ -14,7 +15,11 @@
         <th style="padding: 10px;"> password </th>
         {% for user in users %}
         <tr style="padding: 10px;">
+            {% if sys_admin == user.username %}
+            <td style="padding: 10px;"> {{ user.username }} (you) </td>
+            {% else %}
             <td style="padding: 10px;"> {{ user.username }} </td>
+            {% endif %}
             <td style="padding: 10px;"> {{ user.password }} </td>
         </tr>
         {% endfor %}

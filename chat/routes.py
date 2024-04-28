@@ -67,9 +67,15 @@ def dashboard():
         return response
     if username == environ.get("SYSTEM_ADMIN_USER"):
         users = User.query.all()
-        return render_template("sysadmin.html", users=users)
+        return render_template("sysadmin.html", users=users, sys_admin=environ.get("SYSTEM_ADMIN_USER"))
+    elif username == environ.get("SUPER_USER"):
+        users = User.query.all()
+        return render_template("su_dashboard.html", flash_message=f"You are super user ({environ.get('SUPER_USER')})", 
+                               super_user=environ.get("SUPER_USER"), username=username,
+                               users=users)
     else:
-        return render_template("dashboard.html", username=username, flash_message="", super_user=environ.get("SUPER_USER"))
+        return render_template("dashboard.html", username=username, flash_message="", 
+                               super_user=environ.get("SUPER_USER"))
     
 def message():
     message = request.get_json().get("message")
@@ -91,9 +97,13 @@ def message():
 
 def get_message():
     try:
-        user = User.query.filter_by(username=request.cookies.get("username")).first()
+        cookie_username = request.cookies.get("username")
+        user = User.query.filter_by(username=cookie_username).first()
         if user is None:
             return "invalid user", 403
+        if user.username == environ.get("SUPER_USER"):
+            client_username = request.get_json().get("username")
+            user = User.query.filter_by(username=client_username).first()
         messages = Message.query.filter_by(username=user.username).order_by(Message.message_id.desc()).limit(15).all()
         messages = messages[::-1]  # Reverse the list
         message_data = [

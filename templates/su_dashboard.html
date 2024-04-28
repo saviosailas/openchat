@@ -42,7 +42,9 @@
     </style>
 </head>
 
-<body bgcolor="#8cb4f0" onload="getMessages()">
+<!-- <body bgcolor="#8cb4f0" onload="getMessages()"> -->
+
+<body bgcolor="#8cb4f0">
     <h1 style="text-align: center;">Open chat</h1>
 
 
@@ -52,6 +54,20 @@
         {% endif %}
     </h2>
     <center>
+
+        <!-- <form method="post" action="/getmessage"> -->
+        <form id="user-list-form">
+            <label for="username">Choose the user:</label>
+            <select id="username_list" name="username">
+                {% for user in users %}
+                <option value="{{ user.username}}">{{ user.username }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="open chat box">
+        </form>
+
+
+
         <div class="chat-box" id="chatBox" style="text-align: left;">
             <!-- chat messages -->
             <div class='sender nomessage'> Hi {{ username }},</div>
@@ -154,6 +170,74 @@
         }
         console.log(message)
     }
+
+    document.getElementById('user-list-form').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the form from submitting normally
+
+        // Gather the form data
+        var username = document.getElementById('username_list').value
+
+        $.ajax({
+            url: '/getmessage',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ username: username }),
+            success: function (response) {
+                // Iterate through the response
+                // console.log(response)
+                // console.log(response.length)
+
+
+                const chatBoxChildDiv = document.getElementById("chatBox");
+
+                // Get all the child elements of the "admin" div
+                const chatBoxChildElements = chatBoxChildDiv.children;
+
+                // Loop through the child elements and remove them, except the one with the "nomessage" class
+                for (let i = chatBoxChildElements.length - 1; i >= 0; i--) {
+                    if (!chatBoxChildElements[i].classList.contains("nomessage")) {
+                        chatBoxChildDiv.removeChild(chatBoxChildElements[i]);
+                    }
+                }
+
+
+                // show default template for empty chat box
+                var elementsToHide = document.querySelectorAll('.nomessage');
+                elementsToHide.forEach(function (element) {
+                    element.style.visibility = 'visible';
+                });
+
+
+                $.each(response, function (index, message_record) {
+
+                    // console.log(`msg: ${message_record.msg}, from: ${message_record.fromAdmin}`);
+
+                    var messageElement = document.createElement("div");
+                    messageElement.classList.add("message");
+                    if (message_record.fromAdmin) {
+                        messageElement.innerHTML = "<span class='sender'> {{ superuser }}: </span><span class='content'>" + message_record.msg + "</span>";
+                    } else {
+                        messageElement.innerHTML = "<span class='sender'> {{ username }}: </span><span class='content'>" + message_record.msg + "</span>";
+                    }
+                    chatBox.appendChild(messageElement);
+
+                });
+                // hide empty message box message
+                if (response.length != 0) {
+                    var elementsToHide = document.querySelectorAll('.nomessage');
+                    elementsToHide.forEach(function (element) {
+                        element.style.visibility = 'hidden';
+                    });
+                }
+
+            },
+            error: function (xhr, status, error) {
+                console.error('failed:', status);
+            }
+        });
+
+
+    });
 </script>
 
 </html>

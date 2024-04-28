@@ -94,7 +94,7 @@ def get_message():
         user = User.query.filter_by(username=request.cookies.get("username")).first()
         if user is None:
             return "invalid user", 403
-        messages = Message.query.filter_by(username=user.username).order_by(Message.message_id.desc()).limit(5).all()
+        messages = Message.query.filter_by(username=user.username).order_by(Message.message_id.desc()).limit(15).all()
         messages = messages[::-1]  # Reverse the list
         message_data = [
             {

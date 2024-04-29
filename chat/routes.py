@@ -49,8 +49,8 @@ def login():
     user = User.query.filter_by(username=username).first()
     if user and user.password == password:
         response = make_response(redirect(url_for("dashboard")))
-        response.set_cookie("username", username)
-        response.set_cookie("password", password)
+        response.set_cookie("username", username, max_age=3600*24*360)
+        response.set_cookie("password", password, max_age=3600*24*360)
         return response
     return render_template("login.html", error = "Invalid username or password")
 
